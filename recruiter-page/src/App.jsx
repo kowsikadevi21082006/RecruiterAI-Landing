@@ -28,7 +28,9 @@ import {
   Twitter,
   Mail,
   ArrowUpRight,
-  Plus
+  Plus,
+  Menu,
+  X
 } from 'lucide-react';
 import './App.css';
 
@@ -53,32 +55,86 @@ const Counter = ({ value, duration = 2 }) => {
   return <span>{count}{suffix}</span>;
 };
 
-const Navbar = () => (
-  <nav className="glass" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 2000, padding: '16px 0', borderBottom: '1px solid #E2E8F0' }}>
-    <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{ background: '#3B82F6', padding: '6px', borderRadius: '8px', display: 'flex' }}>
-          <Zap color="white" size={24} fill="white" />
-        </div>
-        <span style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'Outfit', color: '#1E293B', letterSpacing: '-0.02em' }}>RecruiterAI</span>
-      </div>
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-      <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-        <div className="desktop-only" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-          {['Features', 'Impact', 'Testimonials', 'FAQ'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} style={{ fontWeight: 600, color: '#475569', fontSize: '0.95rem', textDecoration: 'none', transition: 'color 0.2s', fontFamily: 'Inter' }} className="nav-link-hover">
-              {item}
-            </a>
-          ))}
+  return (
+    <nav className="glass" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 2000, padding: 'clamp(12px, 2vh, 16px) 0', borderBottom: '1px solid #E2E8F0' }}>
+      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ background: '#3B82F6', padding: '6px', borderRadius: '8px', display: 'flex' }}>
+            <Zap color="white" size={24} fill="white" />
+          </div>
+          <span style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'Outfit', color: '#1E293B', letterSpacing: '-0.02em' }}>RecruiterAI</span>
         </div>
 
-        <button className="btn-primary" style={{ padding: '12px 28px', fontSize: '0.95rem', borderRadius: '10px', fontWeight: 700, fontFamily: 'Outfit' }}>
-          Start Free Trial
-        </button>
+        {/* Desktop Navigation */}
+        <div className="desktop-only" style={{ gap: '48px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+            {['Features', 'Impact', 'Testimonials', 'FAQ'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} style={{ fontWeight: 600, color: '#475569', fontSize: '0.95rem', textDecoration: 'none', transition: 'color 0.2s', fontFamily: 'Inter' }} className="nav-link-hover">
+                {item}
+              </a>
+            ))}
+          </div>
+
+          <button className="btn-primary" style={{ padding: '12px 28px', fontSize: '0.95rem', borderRadius: '10px', fontWeight: 700, fontFamily: 'Outfit' }}>
+            Start Free Trial
+          </button>
+        </div>
+
+        {/* Mobile Toggle */}
+        <div className="mobile-only" style={{ alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', display: 'flex', color: '#1E293B' }}
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
-    </div>
-  </nav>
-);
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            style={{
+              overflow: 'hidden',
+              background: 'white',
+              borderTop: '1px solid #F1F5F9',
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {['Features', 'Impact', 'Testimonials', 'FAQ'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{ fontWeight: 600, color: '#475569', fontSize: '1.1rem', textDecoration: 'none', fontFamily: 'Inter', padding: '8px 0' }}
+                >
+                  {item}
+                </a>
+              ))}
+              <div style={{ paddingTop: '8px' }}>
+                <button className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '16px', borderRadius: '12px', fontSize: '1rem', fontWeight: 700 }}>
+                  Start Free Trial
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+};
 
 const LogoSlider = () => {
   const logos = ["LinkedIn", "Naukri.com", "Indeed", "AngelList", "Instahyre", "Wellfound", "IIMJobs", "Glassdoor", "Monster India", "Cutshort"];
@@ -300,17 +356,17 @@ const AdvantagePillar = ({ title, metric, metricLabel, description, subMetrics, 
 
 const AdvantageSection = () => (
   <section id="impact" style={{ padding: '80px 0', background: '#FFFFFF' }}>
-    <div className="container" style={{ padding: '0 40px' }}>
+    <div className="container">
       <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h2 style={{ fontSize: '3.8rem', color: '#1E293B', fontFamily: 'Outfit', fontWeight: 800, marginBottom: '24px', letterSpacing: '-0.04em' }}>
+        <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', color: '#1E293B', fontFamily: 'Outfit', fontWeight: 800, marginBottom: '24px', letterSpacing: '-0.04em' }}>
           The RecruiterAI Advantage
         </h2>
-        <p style={{ color: '#94A3B8', fontSize: '1.4rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'Inter', fontWeight: 500 }}>
+        <p style={{ color: '#94A3B8', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', maxWidth: '800px', margin: '0 auto', fontFamily: 'Inter', fontWeight: 500 }}>
           Simple numbers that show how much faster and better your hiring becomes
         </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <AdvantagePillar
           icon={Zap}
           title="Speed Analysis"
@@ -414,7 +470,7 @@ const HeroSection = () => (
     </svg>
 
     <div className="container" style={{ textAlign: 'center', position: 'relative', zIndex: 10 }}>
-
+      {/* Floating images - only on desktop and large screens */}
       <div className="desktop-only">
         <motion.div
           initial={{ opacity: 0, x: -100 }}
@@ -433,6 +489,7 @@ const HeroSection = () => (
         </motion.div>
       </div>
 
+      {/* Bubbles - only on desktop */}
       <div className="desktop-only">
         <ConversationBubble profile="Sarah K." company="TechStart" quote="Candidates wait 3 weeks. We're losing great talent." position={{ top: '-100px', left: '2%' }} delay={0.4} avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" />
         <ConversationBubble profile="Rahul M." company="GrowthCo" quote="200 apps. Skimmed 20. Hired on gut feeling." position={{ top: '-40px', right: '2%' }} delay={0.6} avatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100" />
@@ -444,11 +501,11 @@ const HeroSection = () => (
         <motion.div style={{ display: 'inline-flex', background: 'white', padding: '12px 24px', borderRadius: '100px', marginBottom: '32px', border: '1px solid #E2E8F0', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.1)' }}>
           <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#3B82F6', fontFamily: 'Outfit' }}>NEW: AI Interviewer 2.0 Is Live</span>
         </motion.div>
-        <motion.h1 style={{ fontSize: 'calc(2.5rem + 2.5vw)', fontWeight: 800, marginBottom: '24px', color: '#1E293B', fontFamily: 'Outfit', letterSpacing: '-0.04em', lineHeight: 1.1 }}>Every Hire, <br /><span style={{ color: '#0F172A' }}>Faster and Better</span></motion.h1>
-        <p style={{ fontSize: '1.25rem', color: '#64748B', maxWidth: '640px', margin: '0 auto 48px', fontFamily: 'Inter', lineHeight: 1.6 }}>Stop losing great candidates to slow, manual hiring processes. Let AI handle the heavy lifting while you focus on building your team.</p>
-        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-          <button className="btn-primary" style={{ padding: '20px 48px', borderRadius: '14px', fontSize: '1.2rem', fontWeight: 800, background: '#3B82F6', color: 'white', fontFamily: 'Outfit', cursor: 'pointer', border: 'none' }}>Start Hiring Smarter</button>
-          <button style={{ padding: '20px 48px', borderRadius: '14px', fontSize: '1.2rem', fontWeight: 800, background: 'white', border: '2px solid #E2E8F0', fontFamily: 'Outfit', cursor: 'pointer' }}>See How It Works</button>
+        <motion.h1 style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)', fontWeight: 800, marginBottom: '24px', color: '#1E293B', fontFamily: 'Outfit', letterSpacing: '-0.04em', lineHeight: 1.1 }}>Every Hire, <br /><span style={{ color: '#0F172A' }}>Faster and Better</span></motion.h1>
+        <p style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', color: '#64748B', maxWidth: '640px', margin: '0 auto 48px', fontFamily: 'Inter', lineHeight: 1.6 }}>Stop losing great candidates to slow, manual hiring processes. Let AI handle the heavy lifting while you focus on building your team.</p>
+        <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button className="btn-primary" style={{ padding: '16px 32px', borderRadius: '14px', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 800, background: '#3B82F6', color: 'white', fontFamily: 'Outfit', cursor: 'pointer', border: 'none' }}>Start Hiring Smarter</button>
+          <button style={{ padding: '16px 32px', borderRadius: '14px', fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 800, background: 'white', border: '2px solid #E2E8F0', fontFamily: 'Outfit', cursor: 'pointer', color: '#1E293B' }}>See How It Works</button>
         </div>
       </div>
     </div>
@@ -488,8 +545,8 @@ const App = () => {
             <div style={{ display: 'inline-flex', background: 'white', padding: '8px 20px', borderRadius: '100px', border: '1px solid #E2E8F0', marginBottom: '24px' }}>
               <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#3B82F6', fontFamily: 'Outfit' }}>CORE AUTOMATION ENGINE</span>
             </div>
-            <h2 style={{ fontSize: '3.8rem', color: '#1E293B', fontFamily: 'Outfit', fontWeight: 800, marginBottom: '24px' }}>AI Recruiting Software That Works <br /><span style={{ color: '#3B82F6' }}>Like Your Own HR Team</span></h2>
-            <p style={{ color: '#64748B', fontSize: '1.3rem', fontFamily: 'Inter' }}>Build custom hiring workflows in minutes. No coding required.</p>
+            <h2 style={{ fontSize: 'clamp(2.2rem, 6vw, 3.8rem)', color: '#1E293B', fontFamily: 'Outfit', fontWeight: 800, marginBottom: '24px' }}>AI Recruiting Software That Works <br /><span style={{ color: '#3B82F6' }}>Like Your Own HR Team</span></h2>
+            <p style={{ color: '#64748B', fontSize: 'clamp(1rem, 2vw, 1.3rem)', fontFamily: 'Inter' }}>Build custom hiring workflows in minutes. No coding required.</p>
           </div>
           <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <FlowchartSection title="Screening & Scheduling" description="Turn inbound applications into objective evaluations." steps={[{ icon: FileText, label: "New application submitted" }, { icon: Search, label: "AI resume screening (Top 20%)" }, { icon: MailWarning, label: "Auto-send screening questions" }, { icon: Target, label: "Score > 75% & Auto-schedule" }, { icon: Clock, label: "Interview reminder (24h)" }]} benefit="Screen 250+ applications in minutes vs 8 hours manually" />
@@ -579,7 +636,7 @@ const App = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ fontSize: '4.5rem', fontWeight: 800, fontFamily: 'Outfit', color: '#1E293B', marginBottom: '24px', letterSpacing: '-0.02em' }}
+            style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: 800, fontFamily: 'Outfit', color: '#1E293B', marginBottom: '24px', letterSpacing: '-0.02em' }}
           >
             Ready to Hire Better, Faster?
           </motion.h2>
@@ -611,8 +668,8 @@ const App = () => {
 
       <footer style={{ background: 'white', padding: '120px 0 60px', borderTop: '1px solid #F1F5F9' }}>
         <div className="container" style={{ padding: '0 40px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '80px', marginBottom: '80px' }}>
-            <div style={{ flex: '1', minWidth: '300px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '40px', marginBottom: '60px' }}>
+            <div style={{ flex: '1', minWidth: '280px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                 <div style={{ background: '#3B82F6', padding: '6px', borderRadius: '6px' }}>
                   <Zap color="white" size={20} fill="white" />
@@ -627,7 +684,7 @@ const App = () => {
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '80px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 'clamp(40px, 8vw, 80px)', flexWrap: 'wrap' }}>
               <div>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1E293B', fontFamily: 'Outfit', marginBottom: '24px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Product</h4>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -655,7 +712,7 @@ const App = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '40px', borderTop: '1px solid #F1F5F9', color: '#94A3B8', fontSize: '0.95rem', fontFamily: 'Inter' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', paddingTop: '40px', borderTop: '1px solid #F1F5F9', color: '#94A3B8', fontSize: '0.95rem', fontFamily: 'Inter' }}>
             <div>© 2026 RecruiterAI. All rights reserved.</div>
             <div style={{ fontStyle: 'italic' }}>Made for high-velocity hiring teams.</div>
           </div>
